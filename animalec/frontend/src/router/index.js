@@ -144,17 +144,17 @@ const routes = [
   {
     path: "/admin/sponsors",
     name: "listSponsors",
-    component: () => import("@/views/sponsor/ListSponsors.vue"),
+    component: () => import("@/views/sponsors/ListSponsors.vue"),
   },
   {
     path: "/admin/sponsors/add",
     name: "addSponsor",
-    component: () => import("@/views/sponsor/AddSponsor.vue"),
+    component: () => import("@/views/sponsors/AddSponsor.vue"),
   },
   {
     path: "/admin/sponsors/:sponsorId",
     name: "editSponsor",
-    component: () => import("@/views/sponsor/EditSponsor.vue"),
+    component: () => import("@/views/sponsors/EditSponsor.vue"),
   },
   {
     path: "/admin/experts",
