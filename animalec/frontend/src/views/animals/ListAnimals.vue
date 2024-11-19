@@ -7,13 +7,17 @@
         <b-col cols="2"></b-col>
         <b-col>
           <router-link
-            :to="{name:'addAnimal'}"
+            :to="{ name: 'addAnimal' }"
             tag="button"
             class="btn btn-outline-success mr-2 mt-2"
           >
             <i class="fas fa-plus-square"></i> ADICIONAR ANIMAL
           </router-link>
-          <router-link :to="{name:'admin'}" tag="button" class="btn btn-outline-info mr-2 mt-2">
+          <router-link
+            :to="{ name: 'admin' }"
+            tag="button"
+            class="btn btn-outline-info mr-2 mt-2"
+          >
             <i class="fas fa-bars"></i> MENU PRINCIPAL
           </router-link>
         </b-col>
@@ -29,22 +33,31 @@
               <tr>
                 <th scope="col">
                   NOME
-                  <i class="fas fa-arrow-up" v-if="sortType===1" @click="sort()"></i>
+                  <i
+                    class="fas fa-arrow-up"
+                    v-if="sortType === 1"
+                    @click="sort()"
+                  ></i>
                   <i class="fas fa-arrow-down" v-else @click="sort()"></i>
                 </th>
                 <th scope="col">GRUPO</th>
                 <th scope="col">NÍVEL</th>
-                <th scope="col">AÇÕES</th>
+                <th scope="col">ACÇÕES</th>
+                <th scope="col">SPONSORS</th>
+                <th scope="col">EXPERTS</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="animal of animals" :key="animal._id">
-                <td class="pt-4">{{animal.name}}</td>
-                <td class="pt-4">{{animal.group}}</td>
-                <td class="pt-4">{{animal.level}}</td>
+                <td class="pt-4">{{ animal.name }}</td>
+                <td class="pt-4">{{ animal.group }}</td>
+                <td class="pt-4">{{ animal.level }}</td>
                 <td>
                   <router-link
-                    :to="{name:'editAnimal', params:{animalId: animal._id}}"
+                    :to="{
+                      name: 'editAnimal',
+                      params: { animalId: animal._id },
+                    }"
                     tag="button"
                     class="btn btn-outline-success mr-2 mt-2"
                   >
@@ -65,6 +78,8 @@
                     <i class="fas fa-trash-alt"></i> REMOVER
                   </button>
                 </td>
+                <td class="pt-4">{{ animal.sponsor.toString() }}</td>
+                <td class="pt-4">{{ animal.expert.toString() }}</td>
               </tr>
             </tbody>
           </table>
@@ -83,16 +98,16 @@ import { mapGetters } from "vuex";
 export default {
   name: "ManageAnimals",
   components: {
-    HeaderPage
+    HeaderPage,
   },
   data: function() {
     return {
       animals: [],
-      sortType: 1
+      sortType: 1,
     };
   },
   computed: {
-    ...mapGetters("animal", ["getAnimals", "getMessage"])
+    ...mapGetters("animal", ["getAnimals", "getMessage"]),
   },
   methods: {
     fetchAnimals() {
@@ -100,7 +115,7 @@ export default {
         () => {
           this.animals = this.getAnimals;
         },
-        err => {
+        (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
@@ -116,7 +131,7 @@ export default {
     },
 
     viewAnimal(id) {
-      const animal = this.animals.find(animal => animal._id === id);
+      const animal = this.animals.find((animal) => animal._id === id);
 
       this.$fire({
         title: animal.name,
@@ -124,7 +139,7 @@ export default {
         imageUrl: animal.links[0].url,
         imageWidth: 400,
         imageHeight: 200,
-        imageAlt: "Imagem desconhecida"
+        imageAlt: "Imagem desconhecida",
       });
     },
 
@@ -158,10 +173,10 @@ export default {
           this.$alert("Remoção cancelada!", "Informação", "info");
         }
       );
-    }
+    },
   },
   created() {
     this.fetchAnimals();
-  }
+  },
 };
 </script>
