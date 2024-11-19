@@ -5,3 +5,4 @@ nodemon.json
 index.html
 localstorage/locations_pt_new
 localstorage/locations_pt_new_mounted
+package-lock.json
