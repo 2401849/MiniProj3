@@ -1,80 +1,68 @@
-import API_URL from "./config.js";
+const sponsorsList = [];
 
 export const sponsorService = {
-  async getSponsors(token) {
-    let response = await fetch(`${API_URL}/sponsors`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      return await response.json();
-    } else {
-      throw Error(handleResponses(response.status));
-    }
+  async getSponsors() {
+    console.log("current", sponsorsList);
+    return {
+      body: sponsorsList,
+      message: "ok",
+    };
   },
 
   async addSponsor(token, payload) {
-    const response = await fetch(`${API_URL}/sponsors`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      body: JSON.stringify(payload),
-    });
-    if (response.ok) {
-      return await response.json();
+    console.log("add", payload);
+    sponsorsList.push(payload);
+    return {
+      body: { name: payload.name },
+      message: "ok",
+    };
+  },
+
+  async viewAnimalPerSponsor(token, payload) {
+    const sponsorIndex = sponsorsList.findIndex(
+      (sponsor) => sponsor.id === payload.id
+    );
+    if (sponsorIndex !== -1) {
+      return {
+        body: sponsorsList[sponsorIndex],
+        message: "ok",
+      };
     } else {
-      throw Error(handleResponses(response.status));
+      throw Error("sponsor not found");
     }
   },
 
   async editSponsor(token, payload) {
-    const response = await fetch(`${API_URL}/sponsors/${payload._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      body: JSON.stringify(payload),
-    });
-    if (response.ok) {
-      return await response.json();
+    console.log("edit:", payload);
+    const sponsorIndex = sponsorsList.findIndex(
+      (sponsor) => sponsor.id === payload.id
+    );
+    if (sponsorIndex !== -1) {
+      sponsorsList[sponsorIndex] = {
+        ...sponsorsList[sponsorIndex],
+        ...payload,
+      };
+      console.log(sponsorsList);
+      return {
+        body: { name: payload.name },
+        message: "ok",
+      };
     } else {
-      throw Error(handleResponses(response.status));
+      throw Error("sponsor not found");
     }
   },
-
   async removeSponsor(token, id) {
-    const response = await fetch(`${API_URL}/sponsors/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-    });
-    if (response.ok) {
-      return await response.json();
-    } else {
-      throw Error(handleResponses(response.status));
+    const sponsorIndex = sponsorsList.findIndex((sponsor) => sponsor.id === id);
+
+    if (sponsorIndex !== -1) {
+      sponsorsList.splice(sponsorIndex, 1);
+      return {
+        message: "ok",
+      };
     }
+    return {
+      message: "sponsor not found",
+    };
   },
 };
-
-function handleResponses(code) {
-  let message = "";
-  switch (code) {
-    case 401:
-      message = "Não está autorizado a executar esta ação!";
-      break;
-    default:
-      message = "Mensagem desconhecida";
-      break;
-  }
-  return message;
-}
-
 export default sponsorService;

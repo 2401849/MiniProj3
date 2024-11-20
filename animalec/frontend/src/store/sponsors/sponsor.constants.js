@@ -2,6 +2,7 @@
 export const FETCH_SPONSORS = "fetchSponsors";
 export const ADD_SPONSOR = "addSponsor";
 export const EDIT_SPONSOR = "editSponsor";
+export const GET_ANIMALS_SPONSOR = "getAnimalsSponsor";
 export const REMOVE_SPONSOR = "removeSponsor";
 
 // Mutations

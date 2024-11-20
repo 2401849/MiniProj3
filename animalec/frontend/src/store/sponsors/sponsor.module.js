@@ -5,6 +5,7 @@ import {
   ADD_SPONSOR,
   EDIT_SPONSOR,
   REMOVE_SPONSOR,
+  GET_ANIMALS_SPONSOR,
   // Mutations
   SET_SPONSORS,
   SET_MESSAGE,
@@ -18,12 +19,26 @@ const state = {
 const getters = {
   getSponsors: (state) => state.sponsors,
   getSponsorsById: (state) => (id) =>
-    state.sponsors.find((sponsor) => sponsor._id === id),
+    state.sponsors.find((sponsor) => sponsor.id === id),
   getMessage: (state) => state.message,
 };
 
 const actions = {
   [FETCH_SPONSORS]: ({ commit, rootState }) => {
+    return new Promise((resolve, reject) => {
+      sponsorService.getSponsors(rootState.auth.token).then(
+        (res) => {
+          commit(SET_SPONSORS, res.body);
+          resolve(res);
+        },
+        (err) => {
+          commit(SET_MESSAGE, err.message);
+          reject(err);
+        }
+      );
+    });
+  },
+  [GET_ANIMALS_SPONSOR]: ({ commit, rootState }) => {
     return new Promise((resolve, reject) => {
       sponsorService.getSponsors(rootState.auth.token).then(
         (res) => {
@@ -58,6 +73,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       sponsorService.editSponsor(rootState.auth.token, payload).then(
         (res) => {
+          console.log(res);
           commit(
             SET_MESSAGE,
             `O sponsor ${res.body.name} foi atualizado com sucesso!`
