@@ -1,7 +1,7 @@
 // Actions
 export const FETCH_EXPERTS = "fetchExperts";
 export const ADD_EXPERT = "addExpert";
-export const EDIT_EXPERT = "editExpert";
+export const GET_ANIMALS_EXPERT = "getAnimalsExpert";
 export const REMOVE_EXPERT = "removeExpert";
 
 // Mutations
