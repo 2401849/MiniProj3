@@ -78,8 +78,28 @@
                     <i class="fas fa-trash-alt"></i> REMOVER
                   </button>
                 </td>
-                <td class="pt-4">{{ animal.sponsor.toString() }}</td>
-                <td class="pt-4">{{ animal.expert.toString() }}</td>
+                <td class="pt-4">
+                  {{
+                    sponsors
+                      .filter((sponsor) => {
+                        if (
+                          sponsor.animals.filter(
+                            (obj) => obj._id === animal._id
+                          ).length > 0
+                        )
+                          return true;
+                      })
+                      .map((sponsor) => sponsor.name)
+                      .join(",\n")
+                  }}
+                </td>
+                <td class="pt-4">
+                  {{
+                    experts
+                      .filter((obj) => obj.expert.includes(animal.group))
+                      .join(",\n")
+                  }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -92,6 +112,10 @@
 
 <script>
 import { FETCH_ANIMALS, REMOVE_ANIMAL } from "@/store/animals/animal.constants";
+import { FETCH_SPONSORS } from "@/store/sponsors/sponsor.constants";
+// import {
+//   FETCH_EXPERTS
+// } from "@/store/experts/expert.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 
@@ -103,17 +127,33 @@ export default {
   data: function() {
     return {
       animals: [],
+      sponsors: [],
+      experts: [],
       sortType: 1,
     };
   },
   computed: {
     ...mapGetters("animal", ["getAnimals", "getMessage"]),
+    ...mapGetters("sponsor", ["getSponsors"]),
+    ...mapGetters("expert", ["getExperts"]),
   },
   methods: {
     fetchAnimals() {
       this.$store.dispatch(`animal/${FETCH_ANIMALS}`).then(
         () => {
           this.animals = this.getAnimals;
+        },
+        (err) => {
+          this.$alert(`${err.message}`, "Erro", "error");
+        }
+      );
+    },
+    fetchSponsors() {
+      this.$store.dispatch(`sponsor/${FETCH_SPONSORS}`).then(
+        () => {
+          if (this.getSponsors.length > 0) {
+            this.sponsors = this.getSponsors;
+          }
         },
         (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
@@ -176,6 +216,8 @@ export default {
     },
   },
   created() {
+    this.fetchSponsors();
+    // this.fetchExperts();
     this.fetchAnimals();
   },
 };
