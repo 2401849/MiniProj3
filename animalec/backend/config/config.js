@@ -1,6 +1,6 @@
 module.exports = {
   mongodb: {
-    uri: "mongodb://root:root@localhost:27017/",
+    uri: "mongodb://root:root@localhost:27017",
     collections: {
       animal: "animals",
       question: "questions",
