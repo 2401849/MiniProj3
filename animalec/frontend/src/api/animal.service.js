@@ -6,8 +6,8 @@ export const animalService = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
-      },
+        Authorization: token
+      }
     });
     if (response.ok) {
       return await response.json();
@@ -21,9 +21,9 @@ export const animalService = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: token
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload)
     });
     if (response.ok) {
       return await response.json();
@@ -37,9 +37,9 @@ export const animalService = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: token
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload)
     });
     if (response.ok) {
       return await response.json();
@@ -53,15 +53,15 @@ export const animalService = {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
-      },
+        Authorization: token
+      }
     });
     if (response.ok) {
       return await response.json();
     } else {
       throw Error(handleResponses(response.status));
     }
-  },
+  }
 };
 
 function handleResponses(code) {

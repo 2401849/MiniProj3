@@ -5,8 +5,8 @@ export const expertService = {
     const response = await userService.getUsers(token);
 
     return {
-      body: response.body.filter((user) => user.isExpert),
-      message: "ok",
+      body: response.body.filter(user => user.isExpert),
+      message: "ok"
     };
   },
 
@@ -15,7 +15,7 @@ export const expertService = {
 
     return {
       body: { name: payload.name },
-      message: "ok",
+      message: "ok"
     };
   },
 
@@ -23,8 +23,8 @@ export const expertService = {
     userService.editUser(token, payload);
     return {
       body: { name: payload.name },
-      message: "ok",
+      message: "ok"
     };
-  },
+  }
 };
 export default expertService;

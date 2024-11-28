@@ -96,9 +96,7 @@ export default {
   },
   created() {
     this.selectedSponsor = this.getSponsorsById(this.$route.params.sponsorId);
-    this.animals = this.getListAnimalsByIds(
-      this.selectedSponsor.animals.map((obj) => obj._id)
-    );
+    this.animals = this.getListAnimalsByIds(this.selectedSponsor.animals);
   },
 };
 </script>

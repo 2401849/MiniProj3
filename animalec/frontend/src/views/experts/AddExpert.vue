@@ -79,7 +79,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "AddExpert",
   components: {
-    HeaderPage,
+    HeaderPage
   },
   data: () => {
     return {
@@ -91,18 +91,16 @@ export default {
         { value: "ave", label: "AVE" },
         { value: "mamifero", label: "MAMÍFERO" },
         { value: "peixe", label: "PEIXE" },
-        { value: "reptil", label: "RÉPTIL" },
-      ],
+        { value: "reptil", label: "RÉPTIL" }
+      ]
     };
   },
   computed: {
     ...mapGetters("user", ["getUsers"]),
     selectedUserName() {
-      const user = this.users.find(
-        (user) => user._id === this.selectedUser._id
-      );
+      const user = this.users.find(user => user._id === this.selectedUser._id);
       return user ? user.name : "";
-    },
+    }
   },
   methods: {
     fetchUsers() {
@@ -112,7 +110,7 @@ export default {
             this.users = this.getUsers;
           }
         },
-        (err) => {
+        err => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
@@ -125,14 +123,14 @@ export default {
           this.$alert("Expert adicionado com sucesso!", "Sucesso", "success");
           router.push({ name: "listExperts" });
         },
-        (err) => {
+        err => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
-    },
+    }
   },
   mounted() {
     this.fetchUsers();
-  },
+  }
 };
 </script>

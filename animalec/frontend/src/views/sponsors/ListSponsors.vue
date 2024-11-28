@@ -124,9 +124,7 @@ export default {
     fetchSponsors() {
       this.$store.dispatch(`sponsor/${FETCH_SPONSORS}`).then(
         () => {
-          if (this.getSponsors.length > 0) {
-            this.sponsors = this.getSponsors;
-          }
+          this.sponsors = this.getSponsors;
         },
         (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
@@ -165,8 +163,7 @@ export default {
       else return 0;
     },
     getAnimalNamesByIds(animals) {
-      const animalIds = animals.map((animal) => animal._id);
-      const animalNames = this.getListAnimalsByIds(animalIds).map(
+      const animalNames = this.getListAnimalsByIds(animals).map(
         (animal) => animal.name
       );
       return animalNames.join(", ");

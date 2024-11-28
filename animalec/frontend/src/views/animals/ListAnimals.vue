@@ -79,26 +79,10 @@
                   </button>
                 </td>
                 <td class="pt-4">
-                  {{
-                    sponsors
-                      .filter((sponsor) => {
-                        if (
-                          sponsor.animals.filter(
-                            (obj) => obj._id === animal._id
-                          ).length > 0
-                        )
-                          return true;
-                      })
-                      .map((sponsor) => sponsor.name)
-                      .join(",\n")
-                  }}
+                  {{ getSponsorsToList(animal._id) }}
                 </td>
                 <td class="pt-4">
-                  {{
-                    experts
-                      .filter((obj) => obj.expert.includes(animal.group))
-                      .join(",\n")
-                  }}
+                  {{ getExpertsToList(animal.group) }}
                 </td>
               </tr>
             </tbody>
@@ -113,9 +97,7 @@
 <script>
 import { FETCH_ANIMALS, REMOVE_ANIMAL } from "@/store/animals/animal.constants";
 import { FETCH_SPONSORS } from "@/store/sponsors/sponsor.constants";
-// import {
-//   FETCH_EXPERTS
-// } from "@/store/experts/expert.constants";
+import { FETCH_EXPERTS } from "@/store/experts/expert.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 
@@ -151,14 +133,38 @@ export default {
     fetchSponsors() {
       this.$store.dispatch(`sponsor/${FETCH_SPONSORS}`).then(
         () => {
-          if (this.getSponsors.length > 0) {
-            this.sponsors = this.getSponsors;
-          }
+          this.sponsors = this.getSponsors;
         },
         (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
+    },
+    fetchExperts() {
+      this.$store.dispatch(`expert/${FETCH_EXPERTS}`).then(
+        () => {
+          this.experts = this.getExperts;
+        },
+        (err) => {
+          this.$alert(`${err.message}`, "Erro", "error");
+        }
+      );
+    },
+    getSponsorsToList(id) {
+      return this.sponsors
+        .filter((sponsor) => {
+          if (sponsor.animals.includes(id)) return true;
+        })
+        .map((sponsor) => sponsor.name)
+        .join(",\n");
+    },
+    getExpertsToList(group) {
+      return this.experts
+        .filter((expert) => {
+          if (expert.expertTypes.includes(group)) return true;
+        })
+        .map((expert) => expert.name)
+        .join(",\n");
     },
     sort() {
       this.animals.sort(this.compareNames);
@@ -217,7 +223,7 @@ export default {
   },
   created() {
     this.fetchSponsors();
-    // this.fetchExperts();
+    this.fetchExperts();
     this.fetchAnimals();
   },
 };

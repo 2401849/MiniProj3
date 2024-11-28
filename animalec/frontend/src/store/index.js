@@ -24,6 +24,6 @@ export default new Vuex.Store({
     sponsor: moduleSponsor,
     expert: moduleExpert,
     quiz: moduleQuiz,
-    question: moduleQuestion,
-  },
+    question: moduleQuestion
+  }
 });

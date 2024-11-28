@@ -8,33 +8,33 @@ import {
   // Mutations
   SET_ANIMALS,
   SET_MESSAGE,
-  UPDATE_LIKES,
+  UPDATE_LIKES
 } from "./animal.constants";
 
 const state = {
-  animals: [],
+  animals: []
 };
 
 const getters = {
-  getAnimals: (state) => state.animals,
-  getAnimalsById: (state) => (id) =>
-    state.animals.find((animal) => animal._id === id),
-  getListAnimalsByIds: (state) => (ids) =>
-    state.animals.filter((animal) => ids.includes(animal._id)),
-  getListAnimalsByGroup: (state) => (groups) =>
-    state.animals.filter((animal) => groups.includes(animal.group)),
-  getMessage: (state) => state.message,
+  getAnimals: state => state.animals,
+  getAnimalsById: state => id =>
+    state.animals.find(animal => animal._id === id),
+  getListAnimalsByIds: state => ids =>
+    state.animals.filter(animal => ids.includes(animal._id)),
+  getListAnimalsByGroup: state => groups =>
+    state.animals.filter(animal => groups.includes(animal.group)),
+  getMessage: state => state.message
 };
 
 const actions = {
   [FETCH_ANIMALS]: ({ commit, rootState }) => {
     return new Promise((resolve, reject) => {
       animalService.getAnimals(rootState.auth.token).then(
-        (res) => {
+        res => {
           commit(SET_ANIMALS, res.body);
           resolve(res);
         },
-        (err) => {
+        err => {
           commit(SET_MESSAGE, err.message);
           reject(err);
         }
@@ -44,14 +44,14 @@ const actions = {
   [ADD_ANIMAL]: ({ commit, rootState }, payload) => {
     return new Promise((resolve, reject) => {
       animalService.addAnimal(rootState.auth.token, payload).then(
-        (res) => {
+        res => {
           commit(
             SET_MESSAGE,
             `O animal ${res.body.name} foi adicionado com sucesso!`
           );
           resolve(res);
         },
-        (err) => {
+        err => {
           commit(SET_MESSAGE, err.message);
           reject(err);
         }
@@ -61,14 +61,14 @@ const actions = {
   [EDIT_ANIMAL]: ({ commit, rootState }, payload) => {
     return new Promise((resolve, reject) => {
       animalService.editAnimal(rootState.auth.token, payload).then(
-        (res) => {
+        res => {
           commit(
             SET_MESSAGE,
             `O animal ${res.body.name} foi atualizado com sucesso!`
           );
           resolve(res);
         },
-        (err) => {
+        err => {
           commit(SET_MESSAGE, err);
           reject(err);
         }
@@ -78,17 +78,17 @@ const actions = {
   [REMOVE_ANIMAL]: ({ commit, rootState }, id) => {
     return new Promise((resolve, reject) => {
       animalService.removeAnimal(rootState.auth.token, id).then(
-        (res) => {
+        res => {
           commit(SET_MESSAGE, `O animal foi removido com sucesso!`);
           resolve(res);
         },
-        (err) => {
+        err => {
           commit(SET_MESSAGE, err.message);
           reject(err);
         }
       );
     });
-  },
+  }
 };
 
 export const mutations = {
@@ -99,12 +99,12 @@ export const mutations = {
     state.message = message;
   },
   [UPDATE_LIKES]: (state, payload) => {
-    state.animals.forEach((animal) => {
+    state.animals.forEach(animal => {
       if (animal._id === payload.animalId) {
         animal.evaluation.push(payload.userId);
       }
     });
-  },
+  }
 };
 
 export default {
@@ -112,5 +112,5 @@ export default {
   state,
   getters,
   actions,
-  mutations,
+  mutations
 };

@@ -111,9 +111,7 @@ export default {
     fetchExperts() {
       this.$store.dispatch(`expert/${FETCH_EXPERTS}`).then(
         () => {
-          if (this.getExperts.length > 0) {
-            this.experts = this.getExperts;
-          }
+          this.experts = this.getExperts;
         },
         (err) => {
           this.$alert(`${err.message}`, "Erro", "error");

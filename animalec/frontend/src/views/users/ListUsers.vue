@@ -96,17 +96,17 @@ import { mapGetters } from "vuex";
 export default {
   name: "ManageUsers",
   components: {
-    HeaderPage,
+    HeaderPage
   },
   data: function() {
     return {
       users: [],
-      sortType: 1,
+      sortType: 1
     };
   },
   computed: {
     ...mapGetters(["getUserLevelByPoints"]),
-    ...mapGetters("user", ["getUsers", "getMessage"]),
+    ...mapGetters("user", ["getUsers", "getMessage"])
   },
   methods: {
     fetchUsers() {
@@ -114,7 +114,7 @@ export default {
         () => {
           this.users = this.getUsers;
         },
-        (err) => {
+        err => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
@@ -130,7 +130,7 @@ export default {
     },
 
     viewUser(id) {
-      const user = this.users.find((user) => user._id === id);
+      const user = this.users.find(user => user._id === id);
       this.$fire({
         title: user.auth.username,
         html: this.generateTemplate(user),
@@ -139,7 +139,7 @@ export default {
         }.png`),
         imageWidth: 150,
         imageHeight: 150,
-        imageAlt: "Imagem desconhecida",
+        imageAlt: "Imagem desconhecida"
       });
     },
 
@@ -163,7 +163,7 @@ export default {
           </p>
         `;
     },
-    formatDate: (d) => {
+    formatDate: d => {
       const newDate = new Date(Date.parse(d));
       return (
         newDate.getFullYear() +
@@ -196,10 +196,10 @@ export default {
           this.$alert("Remoção cancelada!", "Informação", "info");
         }
       );
-    },
+    }
   },
   created() {
     this.fetchUsers();
-  },
+  }
 };
 </script>

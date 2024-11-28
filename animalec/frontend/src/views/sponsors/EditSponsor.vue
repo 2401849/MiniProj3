@@ -156,7 +156,7 @@ export default {
     this.selectedSponsor = this.getSponsorsById(this.$route.params.sponsorId);
     if (this.selectedSponsor && this.selectedSponsor.animals) {
       this.sponsoredAnimalsArray = this.getListAnimalsByIds(
-        this.selectedSponsor.animals.map((obj) => obj._id)
+        this.selectedSponsor.animals
       );
       this.sponsoredAnimalsNames = this.sponsoredAnimalsArray
         .map((animal) => animal.name)

@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     ...mapGetters("animal", ["getListAnimalsByGroup"]),
-    ...mapGetters("expert", ["getExpertsById"]),
+    ...mapGetters("expert", ["getExpertById"]),
   },
   methods: {
     sort() {
@@ -82,7 +82,7 @@ export default {
     },
   },
   created() {
-    this.selectedExpert = this.getExpertsById(this.$route.params.expertId);
+    this.selectedExpert = this.getExpertById(this.$route.params.expertId);
     this.animals = this.getListAnimalsByGroup(this.selectedExpert.expertTypes);
   },
 };

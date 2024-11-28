@@ -48,7 +48,7 @@ const userSchema = new Schema({
       default: null,
     },
   },
-  animals: [{ _id: String }],
+  animals: [String],
 });
 
 userSchema.pre("save", function (callback) {

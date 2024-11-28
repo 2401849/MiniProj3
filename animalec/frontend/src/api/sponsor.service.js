@@ -5,8 +5,8 @@ export const sponsorService = {
     const response = await userService.getUsers(token);
 
     return {
-      body: response.body.filter((user) => user.sponsor),
-      message: "ok",
+      body: response.body.filter(user => user.sponsor),
+      message: "ok"
     };
   },
 
@@ -15,7 +15,7 @@ export const sponsorService = {
 
     return {
       body: { name: payload.name },
-      message: "ok",
+      message: "ok"
     };
   },
 
@@ -24,7 +24,7 @@ export const sponsorService = {
 
     return {
       body: { name: payload.name },
-      message: "ok",
+      message: "ok"
     };
   },
 
@@ -32,8 +32,8 @@ export const sponsorService = {
     userService.editUser(token, payload);
     return {
       body: { name: payload.name },
-      message: "ok",
+      message: "ok"
     };
-  },
+  }
 };
 export default sponsorService;

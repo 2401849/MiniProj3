@@ -17,7 +17,7 @@ const state = {
 
 const getters = {
   getExperts: (state) => state.experts,
-  getExpertsById: (state) => (id) =>
+  getExpertById: (state) => (id) =>
     state.experts.find((expert) => expert._id === id),
   getMessage: (state) => state.message,
 };
@@ -71,9 +71,9 @@ const actions = {
       );
     });
   },
-  [REMOVE_EXPERT]: ({ commit, rootState }, id) => {
+  [REMOVE_EXPERT]: ({ commit, rootState }, payload) => {
     return new Promise((resolve, reject) => {
-      expertService.removeExpert(rootState.auth.token, id).then(
+      expertService.removeExpert(rootState.auth.token, payload).then(
         (res) => {
           commit(SET_MESSAGE, `O expert foi removido com sucesso!`);
           resolve(res);

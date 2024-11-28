@@ -53,7 +53,7 @@ import AdminOptionBox from "@/components/AdminOptionBox.vue";
 export default {
   components: {
     HeaderPage,
-    AdminOptionBox,
-  },
+    AdminOptionBox
+  }
 };
 </script>
