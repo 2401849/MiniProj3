@@ -46,14 +46,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="sponsor of sponsors" :key="sponsor.id">
+              <tr v-for="sponsor of sponsors" :key="sponsor._id">
                 <td class="pt-4">{{ sponsor.name }}</td>
                 <td class="pt-4">{{ sponsor.location.city }}</td>
                 <td>
                   <router-link
                     :to="{
                       name: 'editSponsor',
-                      params: { sponsorId: sponsor.id },
+                      params: { sponsorId: sponsor._id },
                     }"
                     tag="button"
                     class="btn btn-outline-success mr-2 mt-2"
@@ -63,7 +63,7 @@
                   <router-link
                     :to="{
                       name: 'viewAnimalsSponsor',
-                      params: { sponsorId: sponsor.id },
+                      params: { sponsorId: sponsor._id },
                     }"
                     tag="button"
                     class="btn btn-outline-success mr-2 mt-2"
@@ -71,7 +71,7 @@
                     <i class="fas fa-edit"></i> VER
                   </router-link>
                   <button
-                    @click="removeSponsor(sponsor.id)"
+                    @click="removeSponsor(sponsor._id)"
                     type="button"
                     class="btn btn-outline-danger mr-2 mt-2"
                   >
@@ -79,7 +79,7 @@
                   </button>
                 </td>
                 <td class="pt-4">
-                  {{ sponsor.animals?.map((animal) => animal.name).join(", ") }}
+                  {{ getAnimalNamesByIds(sponsor.animals) }}
                 </td>
               </tr>
             </tbody>
@@ -88,21 +88,6 @@
         <b-col cols="2"></b-col>
       </b-row>
     </b-container>
-    <b-modal v-model="showUserModal" title="Informações do Sponsor">
-      <div v-if="selectedUser">
-        <p><b>Nome:</b> {{ selectedUser.name }}</p>
-        <p>
-          <b>Tipo:</b>
-          {{ selectedUser.type === "admin" ? "Administrador" : "Utilizador" }}
-        </p>
-        <p><b>Pontos:</b> {{ selectedUser.gamification.points }}</p>
-        <p><b>Cidade:</b> {{ selectedUser.location.city }}</p>
-        <p><b>País:</b> {{ selectedUser.location.country }}</p>
-      </div>
-      <div v-else>
-        <p>A carregar informações do sponsor...</p>
-      </div>
-    </b-modal>
   </section>
 </template>
 
@@ -111,6 +96,7 @@ import {
   FETCH_SPONSORS,
   REMOVE_SPONSOR,
 } from "@/store/sponsors/sponsor.constants";
+import { FETCH_ANIMALS } from "@/store/animals/animal.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 
@@ -124,15 +110,17 @@ export default {
       user: {},
       sponsors: [],
       sortType: 1,
-      showUserModal: false,
-      selectedUser: null,
     };
   },
   computed: {
     ...mapGetters("sponsor", ["getSponsors"]),
-    ...mapGetters("user", ["getUsersById"]),
+    ...mapGetters("sponsor", ["getSponsorsById"]),
+    ...mapGetters("animal", ["getListAnimalsByIds"]),
   },
   methods: {
+    fetchAnimals() {
+      this.$store.dispatch(`animal/${FETCH_ANIMALS}`);
+    },
     fetchSponsors() {
       this.$store.dispatch(`sponsor/${FETCH_SPONSORS}`).then(
         () => {
@@ -153,10 +141,14 @@ export default {
         { confirmButtonText: "OK", cancelButtonText: "Cancelar" }
       ).then(
         () => {
-          this.$store.dispatch(`sponsor/${REMOVE_SPONSOR}`, id).then(() => {
-            this.$alert("Sponsor removido!", "Sucesso", "success");
-            this.fetchSponsors();
-          });
+          const selectedUser = this.getSponsorsById(id);
+          selectedUser.sponsor = false;
+          this.$store
+            .dispatch(`sponsor/${REMOVE_SPONSOR}`, selectedUser)
+            .then(() => {
+              this.$alert("Sponsor removido!", "Sucesso", "success");
+              this.fetchSponsors();
+            });
         },
         () => {
           this.$alert("Remoção cancelada!", "Informação", "info");
@@ -172,9 +164,17 @@ export default {
       else if (u1.name < u2.name) return -1 * this.sortType;
       else return 0;
     },
+    getAnimalNamesByIds(animals) {
+      const animalIds = animals.map((animal) => animal._id);
+      const animalNames = this.getListAnimalsByIds(animalIds).map(
+        (animal) => animal.name
+      );
+      return animalNames.join(", ");
+    },
   },
   mounted() {
     this.fetchSponsors();
+    this.fetchAnimals();
   },
 };
 </script>

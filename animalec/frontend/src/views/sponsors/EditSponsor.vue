@@ -1,10 +1,8 @@
 <template>
-  <!-- Portfolio Section -->
   <section class="page-section">
     <b-container>
       <HeaderPage title="Adicionar Animais ao Sponsor" />
 
-      <!--FORM-->
       <b-row>
         <b-col cols="2"></b-col>
         <b-col>
@@ -15,13 +13,13 @@
               <select
                 id="sltGroupAnimal"
                 class="form-control form-control-lg"
-                v-model="selectedAnimal"
+                v-model="selectedAnimal._id"
               >
                 <option value="">-- SELECIONA ANIMAL --</option>
                 <option
                   v-for="animal of animals"
                   :key="animal._id"
-                  :value="animal"
+                  :value="animal._id"
                 >
                   {{ animal.name }}
                 </option>
@@ -48,7 +46,7 @@
                 placeholder="<ANIMAIS A PATRICIONAR>"
                 cols="30"
                 rows="10"
-                v-model="sponsoredAnimalsText"
+                v-model="sponsoredAnimalsNames"
                 readonly
               ></textarea>
             </div>
@@ -74,6 +72,7 @@ import HeaderPage from "@/components/HeaderPage.vue";
 import router from "@/router";
 import { mapGetters } from "vuex";
 import { EDIT_SPONSOR } from "@/store/sponsors/sponsor.constants";
+import { FETCH_ANIMALS } from "@/store/animals/animal.constants";
 
 export default {
   name: "EditSponsor",
@@ -82,125 +81,87 @@ export default {
   },
   data: () => {
     return {
-      selectedSponsor: "",
-      selectedAnimal: "",
+      selectedSponsor: {},
+      selectedAnimal: {},
       sponsoredAnimalsSet: new Set(),
       sponsoredAnimalsArray: [],
-      sponsor: {},
+      sponsoredAnimalsNames: "",
       animals: [],
     };
   },
   computed: {
-    sponsoredAnimalsText() {
-      return this.sponsoredAnimalsArray.map((animal) => animal.name).join("\n");
-    },
     ...mapGetters("sponsor", ["getSponsorsById"]),
+    ...mapGetters("animal", ["getAnimals"]),
+    ...mapGetters("animal", ["getListAnimalsByIds"]),
   },
   mounted() {
     this.fetchAnimals();
-    this.fillAnimalsSponsored();
   },
   methods: {
     fetchAnimals() {
-      this.animals = [
-        {
-          id: 1,
-          name: "cão",
-          group: "mamífero",
-          level: 1,
-          description: "O cão é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://www.purina.pt/sites/g/files/mcldtz1671/files/2018-03/cao-em-casa.jpg",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 2,
-          name: "gato",
-          group: "mamífero",
-          level: 1,
-          description: "O gato é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://www.royalcanin.es/wp-content/uploads/2017/10/bigotesnew.jpg",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 3,
-          name: "pardal",
-          group: "ave",
-          level: 2,
-          description: "O pardal é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://cdn.pixabay.com/photo/2019/07/23/00/55/sparrow-4356373_960_720.png",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 4,
-          name: "cavalo",
-          group: "mamífero",
-          level: 2,
-          description: "O cavalo é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://cdn.pixabay.com/photo/2017/03/29/20/02/arabian-2186313_960_720.png",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-      ];
-    },
-    fillAnimalsSponsored() {
-      this.sponsoredAnimalsArray = this.selectedSponsor.animals;
-    },
-    update() {
-      const sponsorData = {
-        id: this.selectedSponsor.id,
-        name: this.selectedSponsor.name,
-        animals: this.sponsoredAnimalsArray,
-      };
-      this.$store.dispatch(`sponsor/${EDIT_SPONSOR}`, sponsorData).then(
+      this.$store.dispatch(`animal/${FETCH_ANIMALS}`).then(
         () => {
-          this.$alert(this.getMeNssage, "Sponsor adicionado!", "success");
-          router.push({ name: "listSponsors" });
+          if (this.getAnimals.length > 0) {
+            this.animals = this.getAnimals;
+          }
         },
         (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
     },
+    update() {
+      const animalsToSend = this.sponsoredAnimalsArray.map((animal) => ({
+        _id: animal._id,
+      }));
+      this.selectedSponsor["animals"] = animalsToSend;
+      this.$store
+        .dispatch(`sponsor/${EDIT_SPONSOR}`, this.selectedSponsor)
+        .then(
+          () => {
+            this.$alert("Sponsor adicionado!", "Success", "success");
+            router.push({ name: "listSponsors" });
+          },
+          (err) => {
+            this.$alert(`${err.message}`, "Erro", "error");
+          }
+        );
+    },
     addAnimal() {
-      if (
-        this.selectedAnimal &&
-        !this.sponsoredAnimalsSet.has(this.selectedAnimal.id)
-      ) {
-        this.sponsoredAnimalsSet.add(this.selectedAnimal.id);
-        this.sponsoredAnimalsArray.push(this.selectedAnimal);
+      const animal = this.animals.find(
+        (animal) => animal._id === this.selectedAnimal._id
+      );
+      if (animal && !this.sponsoredAnimalsSet.has(animal._id)) {
+        this.sponsoredAnimalsSet.add(animal._id);
+        this.sponsoredAnimalsArray.push(animal);
+        this.sponsoredAnimalsNames = this.sponsoredAnimalsArray
+          .map((animal) => animal.name)
+          .join("\n");
       }
     },
     clearAnimals() {
-      if (this.selectedAnimal) {
-        const animalId = this.selectedAnimal.id;
+      if (this.selectedAnimal._id) {
+        const animalId = this.selectedAnimal._id;
         this.sponsoredAnimalsSet.delete(animalId);
         this.sponsoredAnimalsArray = this.sponsoredAnimalsArray.filter(
-          (animal) => animal.id !== animalId
+          (animal) => animal._id !== animalId
         );
+        this.sponsoredAnimalsNames = this.sponsoredAnimalsArray
+          .map((animal) => animal.name)
+          .join("\n");
       }
     },
   },
   created() {
     this.selectedSponsor = this.getSponsorsById(this.$route.params.sponsorId);
+    if (this.selectedSponsor && this.selectedSponsor.animals) {
+      this.sponsoredAnimalsArray = this.getListAnimalsByIds(
+        this.selectedSponsor.animals.map((obj) => obj._id)
+      );
+      this.sponsoredAnimalsNames = this.sponsoredAnimalsArray
+        .map((animal) => animal.name)
+        .join("\n");
+    }
   },
 };
 </script>

@@ -82,6 +82,8 @@
 
 <script>
 import { ADD_SPONSOR } from "@/store/sponsors/sponsor.constants";
+import { FETCH_USERS } from "@/store/users/user.constants";
+import { FETCH_ANIMALS } from "@/store/animals/animal.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import router from "@/router";
 import { mapGetters } from "vuex";
@@ -102,97 +104,48 @@ export default {
     };
   },
   computed: {
+    ...mapGetters("user", ["getUsers"]),
+    ...mapGetters("animal", ["getAnimals"]),
     sponsoredAnimalsText() {
       return this.sponsoredAnimalsArray.map((animal) => animal.name).join("\n");
     },
     selectedUserName() {
-      const user = this.users.find((user) => user.id === this.selectedUser.id);
+      const user = this.users.find(
+        (user) => user._id === this.selectedUser._id
+      );
       return user ? user.name : "";
     },
   },
   methods: {
     fetchUsers() {
-      this.users = [
-        {
-          id: 1,
-          name: "João Silva",
-          birthDate: "12/12/2012",
-          points: 34,
-          location: { city: "Porto", country: "Portugal" },
-          active: true,
+      this.$store.dispatch(`user/${FETCH_USERS}`).then(
+        () => {
+          if (this.getUsers.length > 0) {
+            this.users = this.getUsers;
+          }
         },
-        {
-          id: 2,
-          name: "Maria Filipa",
-          birthDate: "12/12/2012",
-          points: 34,
-          location: { city: "Lisboa", country: "Portugal" },
-          active: true,
-        },
-      ];
+        (err) => {
+          this.$alert(`${err.message}`, "Erro", "error");
+        }
+      );
     },
     fetchAnimals() {
-      this.animals = [
-        {
-          id: 1,
-          name: "cão",
-          group: "mamífero",
-          level: 1,
-          description: "O cão é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://www.purina.pt/sites/g/files/mcldtz1671/files/2018-03/cao-em-casa.jpg",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
+      this.$store.dispatch(`animal/${FETCH_ANIMALS}`).then(
+        () => {
+          if (this.getAnimals.length > 0) {
+            this.animals = this.getAnimals;
+          }
         },
-        {
-          id: 2,
-          name: "gato",
-          group: "mamífero",
-          level: 1,
-          description: "O gato é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://www.royalcanin.es/wp-content/uploads/2017/10/bigotesnew.jpg",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 3,
-          name: "pardal",
-          group: "ave",
-          level: 2,
-          description: "O pardal é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://cdn.pixabay.com/photo/2019/07/23/00/55/sparrow-4356373_960_720.png",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 4,
-          name: "cavalo",
-          group: "mamífero",
-          level: 2,
-          description: "O cavalo é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://cdn.pixabay.com/photo/2017/03/29/20/02/arabian-2186313_960_720.png",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-      ];
+        (err) => {
+          this.$alert(`${err.message}`, "Erro", "error");
+        }
+      );
     },
     add() {
-      this.selectedUser.animals = this.sponsoredAnimalsArray;
+      this.selectedUser.animals = this.sponsoredAnimalsArray.map(
+        (animal) => animal._id
+      );
+      this.selectedUser["sponsor"] = true;
       this.$store.dispatch(`sponsor/${ADD_SPONSOR}`, this.selectedUser).then(
         () => {
           this.$alert(this.getMessage, "Sponsor adicionado!", "success");
@@ -206,18 +159,18 @@ export default {
     addAnimal() {
       if (
         this.selectedAnimal &&
-        !this.sponsoredAnimalsSet.has(this.selectedAnimal.id)
+        !this.sponsoredAnimalsSet.has(this.selectedAnimal._id)
       ) {
-        this.sponsoredAnimalsSet.add(this.selectedAnimal.id);
+        this.sponsoredAnimalsSet.add(this.selectedAnimal._id);
         this.sponsoredAnimalsArray.push(this.selectedAnimal);
       }
     },
     clearAnimals() {
       if (this.selectedAnimal) {
-        const animalId = this.selectedAnimal.id;
+        const animalId = this.selectedAnimal._id;
         this.sponsoredAnimalsSet.delete(animalId);
         this.sponsoredAnimalsArray = this.sponsoredAnimalsArray.filter(
-          (animal) => animal.id !== animalId
+          (animal) => animal._id !== animalId
         );
       }
     },
