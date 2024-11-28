@@ -3,12 +3,18 @@
     <b-container>
       <HeaderPage title="Lista Animais Por Expert" />
       <!--MENU TOPO-->
+      <h1 style="text-align: center;">{{ selectedExpert.name }}</h1>
       <b-row class="mb-4">
         <b-col cols="2"></b-col>
-        <h1 style="text-align: center;">{{ selectedExpert.name }}</h1>
+        <router-link
+          :to="{ name: 'admin' }"
+          tag="button"
+          class="btn btn-outline-info mr-2 mt-2"
+        >
+          <i class="fas fa-bars"></i> MENU PRINCIPAL
+        </router-link>
         <br />
       </b-row>
-
       <!--TABLE-->
       <b-row>
         <b-col cols="2"></b-col>
@@ -61,70 +67,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("animal", ["getAnimals", "getMessage"]),
+    ...mapGetters("animal", ["getListAnimalsByGroup"]),
     ...mapGetters("expert", ["getExpertsById"]),
   },
   methods: {
-    fetchAnimals() {
-      this.animals = [
-        {
-          id: 1,
-          name: "cão",
-          group: "mamífero",
-          level: 1,
-          description: "O cão é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://www.purina.pt/sites/g/files/mcldtz1671/files/2018-03/cao-em-casa.jpg",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 2,
-          name: "gato",
-          group: "mamífero",
-          level: 1,
-          description: "O gato é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://www.royalcanin.es/wp-content/uploads/2017/10/bigotesnew.jpg",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 3,
-          name: "pardal",
-          group: "ave",
-          level: 2,
-          description: "O pardal é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://cdn.pixabay.com/photo/2019/07/23/00/55/sparrow-4356373_960_720.png",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-        {
-          id: 4,
-          name: "cavalo",
-          group: "mamífero",
-          level: 2,
-          description: "O cavalo é o melhor amigo do homem",
-          links: {
-            photo:
-              "https://cdn.pixabay.com/photo/2017/03/29/20/02/arabian-2186313_960_720.png",
-            video: "https:",
-            sound: "https",
-          },
-          active: true,
-        },
-      ].filter((animal) => this.selectedExpert?.group?.includes(animal.group));
-    },
     sort() {
       this.animals.sort(this.compareNames);
       this.sortType *= -1;
@@ -137,7 +83,7 @@ export default {
   },
   created() {
     this.selectedExpert = this.getExpertsById(this.$route.params.expertId);
-    this.fetchAnimals();
+    this.animals = this.getListAnimalsByGroup(this.selectedExpert.expertTypes);
   },
 };
 </script>

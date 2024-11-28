@@ -18,7 +18,7 @@
                 aria-label="Seleciona Utilizador"
               >
                 <option value="">-- SELECIONA UTILIZADOR --</option>
-                <option v-for="user in users" :key="user.id" :value="user">
+                <option v-for="user in users" :key="user._id" :value="user">
                   {{ user.name }}
                 </option>
               </select>
@@ -71,8 +71,10 @@
 </template>
 <script>
 import { ADD_EXPERT } from "@/store/experts/expert.constants";
+import { FETCH_USERS } from "@/store/users/user.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import router from "@/router";
+import { mapGetters } from "vuex";
 
 export default {
   name: "AddExpert",
@@ -81,59 +83,52 @@ export default {
   },
   data: () => {
     return {
-      selectedUser: null,
+      selectedUser: "",
       group: [],
       users: [],
       groupOptions: [
         { value: "anfibio", label: "ANFÍBIO" },
         { value: "ave", label: "AVE" },
-        { value: "mamífero", label: "MAMÍFERO" },
+        { value: "mamifero", label: "MAMÍFERO" },
         { value: "peixe", label: "PEIXE" },
         { value: "reptil", label: "RÉPTIL" },
       ],
     };
   },
   computed: {
+    ...mapGetters("user", ["getUsers"]),
     selectedUserName() {
-      return this.selectedUser ? this.selectedUser.name : "";
+      const user = this.users.find(
+        (user) => user._id === this.selectedUser._id
+      );
+      return user ? user.name : "";
     },
   },
   methods: {
     fetchUsers() {
-      this.users = [
-        {
-          id: 1,
-          name: "João Silva",
-          birthDate: "12/12/2012",
-          points: 34,
-          location: { city: "Porto", country: "Portugal" },
-          active: true,
+      this.$store.dispatch(`user/${FETCH_USERS}`).then(
+        () => {
+          if (this.getUsers.length > 0) {
+            this.users = this.getUsers;
+          }
         },
-        {
-          id: 2,
-          name: "Maria Filipa",
-          birthDate: "12/12/2012",
-          points: 34,
-          location: { city: "Lisboa", country: "Portugal" },
-          active: true,
-        },
-      ];
+        (err) => {
+          this.$alert(`${err.message}`, "Erro", "error");
+        }
+      );
     },
     add() {
-      if (!this.selectedUser) {
-        this.$alert("Selecione um utilizador!", "Erro", "error");
-        return;
-      }
-      this.selectedUser.group = this.group;
-      this.$store
-        .dispatch(`expert/${ADD_EXPERT}`, this.selectedUser)
-        .then(() => {
+      this.selectedUser["isExpert"] = true;
+      this.selectedUser["expertTypes"] = this.group;
+      this.$store.dispatch(`expert/${ADD_EXPERT}`, this.selectedUser).then(
+        () => {
           this.$alert("Expert adicionado com sucesso!", "Sucesso", "success");
           router.push({ name: "listExperts" });
-        })
-        .catch((err) => {
+        },
+        (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
-        });
+        }
+      );
     },
   },
   mounted() {

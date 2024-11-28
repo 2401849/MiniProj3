@@ -3,8 +3,8 @@ import {
   // Actions
   FETCH_EXPERTS,
   ADD_EXPERT,
+  EDIT_EXPERT,
   REMOVE_EXPERT,
-  GET_ANIMALS_EXPERT,
   // Mutations
   SET_EXPERTS,
   SET_MESSAGE,
@@ -18,26 +18,12 @@ const state = {
 const getters = {
   getExperts: (state) => state.experts,
   getExpertsById: (state) => (id) =>
-    state.experts.find((expert) => expert.id === id),
+    state.experts.find((expert) => expert._id === id),
   getMessage: (state) => state.message,
 };
 
 const actions = {
   [FETCH_EXPERTS]: ({ commit, rootState }) => {
-    return new Promise((resolve, reject) => {
-      expertService.getExperts(rootState.auth.token).then(
-        (res) => {
-          commit(SET_EXPERTS, res.body);
-          resolve(res);
-        },
-        (err) => {
-          commit(SET_MESSAGE, err.message);
-          reject(err);
-        }
-      );
-    });
-  },
-  [GET_ANIMALS_EXPERT]: ({ commit, rootState }) => {
     return new Promise((resolve, reject) => {
       expertService.getExperts(rootState.auth.token).then(
         (res) => {
@@ -63,6 +49,23 @@ const actions = {
         },
         (err) => {
           commit(SET_MESSAGE, err.message);
+          reject(err);
+        }
+      );
+    });
+  },
+  [EDIT_EXPERT]: ({ commit, rootState }, payload) => {
+    return new Promise((resolve, reject) => {
+      expertService.editExpert(rootState.auth.token, payload).then(
+        (res) => {
+          commit(
+            SET_MESSAGE,
+            `O expert ${res.body.name} foi atualizado com sucesso!`
+          );
+          resolve(res);
+        },
+        (err) => {
+          commit(SET_MESSAGE, err);
           reject(err);
         }
       );

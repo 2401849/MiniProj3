@@ -46,14 +46,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="expert of experts" :key="expert.id">
+              <tr v-for="expert of experts" :key="expert._id">
                 <td class="pt-4">{{ expert.name }}</td>
                 <td class="pt-4">{{ expert.location.city }}</td>
                 <td>
                   <router-link
                     :to="{
                       name: 'viewAnimalsExpert',
-                      params: { expertId: expert.id },
+                      params: { expertId: expert._id },
                     }"
                     tag="button"
                     class="btn btn-outline-success mr-2 mt-2"
@@ -61,7 +61,7 @@
                     <i class="fas fa-edit"></i> VER
                   </router-link>
                   <button
-                    @click="removeExpert(expert.id)"
+                    @click="removeExpert(expert._id)"
                     type="button"
                     class="btn btn-outline-danger mr-2 mt-2"
                   >
@@ -69,7 +69,7 @@
                   </button>
                 </td>
                 <td class="pt-4">
-                  {{ expert.group?.join(", ") }}
+                  {{ expert.expertTypes?.join(", ") }}
                 </td>
               </tr>
             </tbody>
@@ -78,26 +78,12 @@
         <b-col cols="2"></b-col>
       </b-row>
     </b-container>
-    <b-modal v-model="showUserModal" title="Informações do Expert">
-      <div v-if="selectedUser">
-        <p><b>Nome:</b> {{ selectedUser.name }}</p>
-        <p>
-          <b>Tipo:</b>
-          {{ selectedUser.type === "admin" ? "Administrador" : "Utilizador" }}
-        </p>
-        <p><b>Pontos:</b> {{ selectedUser.gamification.points }}</p>
-        <p><b>Cidade:</b> {{ selectedUser.location.city }}</p>
-        <p><b>País:</b> {{ selectedUser.location.country }}</p>
-      </div>
-      <div v-else>
-        <p>A carregar informações do expert...</p>
-      </div>
-    </b-modal>
   </section>
 </template>
 
 <script>
 import { FETCH_EXPERTS, REMOVE_EXPERT } from "@/store/experts/expert.constants";
+import { FETCH_ANIMALS } from "@/store/animals/animal.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 
@@ -111,15 +97,17 @@ export default {
       user: {},
       experts: [],
       sortType: 1,
-      showUserModal: false,
-      selectedUser: null,
     };
   },
   computed: {
     ...mapGetters("expert", ["getExperts"]),
-    ...mapGetters("user", ["getUsersById"]),
+    ...mapGetters("expert", ["getExpertById"]),
+    ...mapGetters("animal", ["getListAnimalsByIds"]),
   },
   methods: {
+    fetchAnimals() {
+      this.$store.dispatch(`animal/${FETCH_ANIMALS}`);
+    },
     fetchExperts() {
       this.$store.dispatch(`expert/${FETCH_EXPERTS}`).then(
         () => {
@@ -140,10 +128,15 @@ export default {
         { confirmButtonText: "OK", cancelButtonText: "Cancelar" }
       ).then(
         () => {
-          this.$store.dispatch(`expert/${REMOVE_EXPERT}`, id).then(() => {
-            this.$alert("Expert removido!", "Sucesso", "success");
-            this.fetchExperts();
-          });
+          const selectedUser = this.getExpertById(id);
+          selectedUser["isExpert"] = false;
+          selectedUser["expertTypes"] = [];
+          this.$store
+            .dispatch(`expert/${REMOVE_EXPERT}`, selectedUser)
+            .then(() => {
+              this.$alert("Expert removido!", "Sucesso", "success");
+              this.fetchExperts();
+            });
         },
         () => {
           this.$alert("Remoção cancelada!", "Informação", "info");
@@ -159,9 +152,17 @@ export default {
       else if (u1.name < u2.name) return -1 * this.sortType;
       else return 0;
     },
+    getAnimalNamesByIds(animals) {
+      const animalIds = animals.map((animal) => animal._id);
+      const animalNames = this.getListAnimalsByIds(animalIds).map(
+        (animal) => animal.name
+      );
+      return animalNames.join(", ");
+    },
   },
   mounted() {
     this.fetchExperts();
+    this.fetchAnimals();
   },
 };
 </script>
