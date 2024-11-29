@@ -1,4 +1,4 @@
-# Tarefa 3.1b
+# Tarefa 3.2
 
 ## Programação Web Avançada
 
@@ -12,3 +12,11 @@ Foram feitas adaptações ao projeto original "Animalec" no âmbito de uma taref
 
 Referência:
 https://www.fca.pt/pt/catalogo/informatica/tecnologias-programacao-web/desenvolvimento-avancado-para-a-web/
+
+## Instruções
+
+#### Docker compose para executar a mongodb localmente.
+
+#### command: docker compose up -d
+
+#### Pode ser gerida via UI na porta 8082 e API 27017
