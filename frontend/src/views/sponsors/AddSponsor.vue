@@ -97,6 +97,7 @@ export default {
     return {
       selectedUser: "",
       selectedAnimal: "",
+      sponsor: "",
       sponsoredAnimalsSet: new Set(),
       sponsoredAnimalsArray: [],
       users: [],
@@ -142,11 +143,19 @@ export default {
       );
     },
     add() {
-      this.selectedUser.animals = this.sponsoredAnimalsArray.map(
-        (animal) => animal._id
-      );
-      this.selectedUser["sponsor"] = true;
-      this.$store.dispatch(`sponsor/${ADD_SPONSOR}`, this.selectedUser).then(
+      this.sponsor = {
+        auth: {
+          username: this.selectedUser.username,
+        },
+        name: this.selectedUser.name,
+        location: {
+          city: this.selectedUser.location.city,
+        },
+        animals: this.sponsoredAnimalsArray.map((animal) => animal._id),
+      };
+      // this.selectedUser.animals =
+      // this.selectedUser["sponsor"] = true;
+      this.$store.dispatch(`sponsor/${ADD_SPONSOR}`, this.sponsor).then(
         () => {
           this.$alert(this.getMessage, "Sponsor adicionado!", "success");
           router.push({ name: "listSponsors" });

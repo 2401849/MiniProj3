@@ -139,20 +139,38 @@ export default {
         { confirmButtonText: "OK", cancelButtonText: "Cancelar" }
       ).then(
         () => {
-          const selectedUser = this.getSponsorsById(id);
-          selectedUser.sponsor = false;
-          this.$store
-            .dispatch(`sponsor/${REMOVE_SPONSOR}`, selectedUser)
-            .then(() => {
-              this.$alert("Sponsor removido!", "Sucesso", "success");
-              this.fetchSponsors();
-            });
+          this.$store.dispatch(`sponsor/${REMOVE_SPONSOR}`, id).then(() => {
+            this.$alert(this.getMessage, "Sponsor removido!", "success");
+            this.fetchSponsors();
+          });
         },
         () => {
           this.$alert("Remoção cancelada!", "Informação", "info");
         }
       );
     },
+    // removeSponsor(id) {
+    //   this.$confirm(
+    //     "Se sim, clique em OK",
+    //     "Deseja mesmo remover o sponsor?",
+    //     "warning",
+    //     { confirmButtonText: "OK", cancelButtonText: "Cancelar" }
+    //   ).then(
+    //     () => {
+    //       const selectedUser = this.getSponsorsById(id);
+    //       selectedUser.sponsor = false;
+    //       this.$store
+    //         .dispatch(`sponsor/${REMOVE_SPONSOR}`, selectedUser)
+    //         .then(() => {
+    //           this.$alert("Sponsor removido!", "Sucesso", "success");
+    //           this.fetchSponsors();
+    //         });
+    //     },
+    //     () => {
+    //       this.$alert("Remoção cancelada!", "Informação", "info");
+    //     }
+    //   );
+    // },
     sort() {
       this.sponsors.sort(this.compareNames);
       this.sortType *= -1;
