@@ -3,7 +3,6 @@ const { validationResult } = require("express-validator");
 const SponsorMessages = require("../messages/sponsor.messages");
 const JWT = require("jsonwebtoken");
 const CONFIG = require("../config/config");
-const Animal = require("../models/animal.model");
 
 exports.get = (req, res) => {
   Sponsor.find(req.query, (error, sponsors) => {
