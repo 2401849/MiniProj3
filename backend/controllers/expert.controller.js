@@ -61,7 +61,7 @@ exports.create = (req, res) => {
         auth: {
           username: req.body.auth.username,
         },
-        expertTypes: req.body.groups,
+        expertTypes: req.body.expertTypes,
       }).save((error, expert) => {
         if (error) throw error;
 
