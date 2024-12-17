@@ -126,15 +126,10 @@ export default {
         { confirmButtonText: "OK", cancelButtonText: "Cancelar" }
       ).then(
         () => {
-          const selectedUser = this.getExpertById(id);
-          selectedUser["isExpert"] = false;
-          selectedUser["expertTypes"] = [];
-          this.$store
-            .dispatch(`expert/${REMOVE_EXPERT}`, selectedUser)
-            .then(() => {
-              this.$alert("Expert removido!", "Sucesso", "success");
-              this.fetchExperts();
-            });
+          this.$store.dispatch(`expert/${REMOVE_EXPERT}`, id).then(() => {
+            this.$alert(this.getMessage, "Expert removido!", "success");
+            this.fetchExperts();
+          });
         },
         () => {
           this.$alert("Remoção cancelada!", "Informação", "info");

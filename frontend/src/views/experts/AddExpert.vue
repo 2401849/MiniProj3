@@ -79,11 +79,12 @@ import { mapGetters } from "vuex";
 export default {
   name: "AddExpert",
   components: {
-    HeaderPage
+    HeaderPage,
   },
   data: () => {
     return {
       selectedUser: "",
+      expert: "",
       group: [],
       users: [],
       groupOptions: [
@@ -91,16 +92,18 @@ export default {
         { value: "ave", label: "AVE" },
         { value: "mamifero", label: "MAMÍFERO" },
         { value: "peixe", label: "PEIXE" },
-        { value: "reptil", label: "RÉPTIL" }
-      ]
+        { value: "reptil", label: "RÉPTIL" },
+      ],
     };
   },
   computed: {
     ...mapGetters("user", ["getUsers"]),
     selectedUserName() {
-      const user = this.users.find(user => user._id === this.selectedUser._id);
+      const user = this.users.find(
+        (user) => user._id === this.selectedUser._id
+      );
       return user ? user.name : "";
-    }
+    },
   },
   methods: {
     fetchUsers() {
@@ -110,27 +113,35 @@ export default {
             this.users = this.getUsers;
           }
         },
-        err => {
+        (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
     },
     add() {
-      this.selectedUser["isExpert"] = true;
-      this.selectedUser["expertTypes"] = this.group;
-      this.$store.dispatch(`expert/${ADD_EXPERT}`, this.selectedUser).then(
+      this.expert = {
+        auth: {
+          username: this.selectedUser.username,
+        },
+        name: this.selectedUser.name,
+        location: {
+          city: this.selectedUser.location.city,
+        },
+        expertTypes: this.group,
+      };
+      this.$store.dispatch(`expert/${ADD_EXPERT}`, this.expert).then(
         () => {
           this.$alert("Expert adicionado com sucesso!", "Sucesso", "success");
           router.push({ name: "listExperts" });
         },
-        err => {
+        (err) => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
-    }
+    },
   },
   mounted() {
     this.fetchUsers();
-  }
+  },
 };
 </script>
