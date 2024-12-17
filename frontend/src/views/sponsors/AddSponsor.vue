@@ -153,8 +153,6 @@ export default {
         },
         animals: this.sponsoredAnimalsArray.map((animal) => animal._id),
       };
-      // this.selectedUser.animals =
-      // this.selectedUser["sponsor"] = true;
       this.$store.dispatch(`sponsor/${ADD_SPONSOR}`, this.sponsor).then(
         () => {
           this.$alert(this.getMessage, "Sponsor adicionado!", "success");

@@ -30,13 +30,6 @@ export const sponsorService = {
     } else {
       throw Error(handleResponses(response.status));
     }
-
-    // userService.editUser(token, payload);
-
-    // return {
-    //   body: { name: payload.name },
-    //   message: "ok",
-    // };
   },
 
   async editSponsor(token, payload) {
@@ -53,13 +46,6 @@ export const sponsorService = {
     } else {
       throw Error(handleResponses(response.status));
     }
-
-    // userService.editUser(token, payload);
-
-    // return {
-    //   body: { name: payload.name },
-    //   message: "ok",
-    // };
   },
 
   async removeSponsor(token, id) {
@@ -75,12 +61,6 @@ export const sponsorService = {
     } else {
       throw Error(handleResponses(response.status));
     }
-
-    // userService.editUser(token, payload);
-    // return {
-    //   body: { name: payload.name },
-    //   message: "ok",
-    // };
   },
 };
 
